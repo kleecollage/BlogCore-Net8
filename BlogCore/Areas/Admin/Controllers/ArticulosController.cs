@@ -76,6 +76,7 @@ public class ArticulosController: Controller
         return View(artiVM);
     }
 
+    [HttpGet]
     public IActionResult Edit(int? id)
     {
         ArticuloVM artiVM = new ArticuloVM()

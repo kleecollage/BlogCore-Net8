@@ -4,43 +4,48 @@ $(document).ready(function () {
 })
 
 function cargarDatatable() {
-    dataTable = $("#tblArticulos").DataTable({
+    dataTable = $("#tblSliders").DataTable({
         "ajax": {
-            "url": "/admin/articulos/GetAll",
+            "url": "/admin/sliders/GetAll",
             "type": "GET",
             "datatype": "json"
         },
         "columns": [
             {"data": "id", "width": "5%"},
             {"data": "nombre", "width": "20%"},
-            {"data": "categoria.nombre", "width": "15%"},
-/*            {
-                "data": "urlImagen",
-                "render": function (imagen) {
-                    return `<img src="${imagen}" width="120" >`;
-                }, "width": "15%" 
-            },*/
+            /* EDICION DE ESTADO */
+            {
+                "data": "estado",
+                "render": function (estadoActual) {
+                    if (estadoActual === true) {
+                        return "Activo"
+                    } else {
+                        return "Inactivo"
+                    }
+                },
+                "width": "15%",
+            },
+            /* FIN DE EDICION DE ESTADO */
             {
                 "data": "urlImagen",
                 "render": function (imagen) {
                     if (imagen) {
-                        return `<img src="${imagen}" width="120" alt="Imagen de Artículo">`;
+                        return `<img src="${imagen}" width="120" alt="Imagen de Slider">`;
                     } else {
                         return `<span>No disponible</span>`;
                     }
                 },
-                "width": "15%"
+                "width": "30%"
             },
-            {"data": "fechaCreacion", "width": "20%"},
             {
                 "data": "id",
                 "render": function (data) {
                     return `<div class="text-center">
-                                <a href="/Admin/Articulos/Edit/${data}" class="btn btn-success text-white" style="cursor:pointer; width:140px;">
+                                <a href="/Admin/Sliders/Edit/${data}" class="btn btn-success text-white" style="cursor:pointer; width:140px;">
                                 <i class="far fa-edit"></i> Editar
                                 </a>
                                 &nbsp;
-                                <a onclick=Delete("/Admin/Articulos/Delete/${data}") class="btn btn-danger text-white" style="cursor:pointer; width:140px;">
+                                <a onclick=Delete("/Admin/Sliders/Delete/${data}") class="btn btn-danger text-white" style="cursor:pointer; width:140px;">
                                 <i class="far fa-trash-alt"></i> Borrar
                                 </a>
                             </div>

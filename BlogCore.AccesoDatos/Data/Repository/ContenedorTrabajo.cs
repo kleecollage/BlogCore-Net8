@@ -12,16 +12,18 @@ public class ContenedorTrabajo: IContenedorTrabajo
         _context = context;
         Categoria = new CategoriaRepository(_context);
         Articulo = new ArticuloRepository(_context);
+        Slider = new SliderRepository(_context);
     }
     
     public ICategoriaRepository Categoria { get; private set; }
     public IArticuloRepository Articulo { get; private set; }
     
+    public ISliderRepository Slider { get; private set; }
+
     public void Dispose()
     {
         _context.Dispose();
     }
-
     
     public void Save()
     {
