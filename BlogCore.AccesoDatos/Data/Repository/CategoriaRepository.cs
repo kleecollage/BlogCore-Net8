@@ -1,7 +1,7 @@
 using BlogCore.AccesoDatos.Data.Repository.IRepository;
 using BlogCore.Data;
 using BlogCore.Models;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BlogCore.AccesoDatos.Data.Repository;
 
@@ -20,6 +20,15 @@ public class CategoriaRepository: Repository<Categoria>, ICategoriaRepository
         objDesdeDb.Nombre = categoria.Nombre;
         objDesdeDb.Orden = categoria.Orden;
         
-        _context.SaveChanges();
+        // _context.SaveChanges();
+    }
+
+    public IEnumerable<SelectListItem> GetListaCategorias()
+    {
+        return _context.Categoria.Select(i => new SelectListItem()
+        {
+            Text = i.Nombre,
+            Value = i.Id.ToString()
+        });
     }
 }

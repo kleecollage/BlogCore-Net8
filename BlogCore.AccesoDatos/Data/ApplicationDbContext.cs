@@ -13,4 +13,5 @@ public class ApplicationDbContext : IdentityDbContext
     
     // Poner aqui todos los modelos que se vayan creando
     public DbSet<Categoria> Categoria { get; set; }
+    public DbSet<Articulo> Articulo { get; set; }
 }
