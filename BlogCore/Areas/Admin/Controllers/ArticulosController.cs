@@ -41,23 +41,16 @@ public class ArticulosController: Controller
     [ValidateAntiForgeryToken]
     public IActionResult Create(ArticuloVM artiVM)
     {
-        Console.WriteLine("Entrando a la acción Create");
         if (ModelState.IsValid)
         {
-            Console.WriteLine("El ModelState es válido");
             string rutaPrincipal = _webHostEnvironment.WebRootPath;
             var archivos = HttpContext.Request.Form.Files;
-            Console.WriteLine("Cantidad de archivos recibidos: " + archivos.Count);
             if (artiVM.Articulo.Id == 0 && archivos.Count > 0)
             {
-                Console.WriteLine("Subiendo un nuevo artículo");
                 // Nuevo articulo
                 string nombreArchivo = Guid.NewGuid().ToString();
                 var subidas = Path.Combine(rutaPrincipal, "imagenes", "articulos");
                 var extension = Path.GetExtension(archivos[0].FileName);
-
-                Console.WriteLine("Ruta de subida: " + subidas);
-                Console.WriteLine("Nombre del archivo: " + nombreArchivo + extension);
 
                 using (var fileStreams =
                        new FileStream(Path.Combine(subidas, nombreArchivo + extension), FileMode.Create))
@@ -65,23 +58,20 @@ public class ArticulosController: Controller
                     archivos[0].CopyTo(fileStreams);
                 }
 
-                artiVM.Articulo.UrlImagen = Path.Combine("imagenes", "articulos", nombreArchivo + extension).Replace(Path.DirectorySeparatorChar, '/');
+                artiVM.Articulo.UrlImagen = "/imagenes/articulos/" + nombreArchivo + extension;
                 artiVM.Articulo.FechaCreacion = DateTime.Now.ToString(CultureInfo.CurrentCulture);
 
                 _contenedorTrabajo.Articulo.Add(artiVM.Articulo);
                 _contenedorTrabajo.Save();
-
-                Console.WriteLine("Artículo guardado exitosamente");
+                
                 return RedirectToAction(nameof(Index)); 
             } 
             else
             {
-                Console.WriteLine("No se seleccionó una imagen");
                 /* Error personalizado */
                 ModelState.AddModelError("Imagen", "Debes seleccionar una imagen");
             }
         }
-        Console.WriteLine("El ModelState no es válido");
         artiVM.ListaCategorias = _contenedorTrabajo.Categoria.GetListaCategorias();
         return View(artiVM);
     }
@@ -101,6 +91,56 @@ public class ArticulosController: Controller
         return View(artiVM); 
     }
     
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(ArticuloVM artiVM)
+    {
+        if (ModelState.IsValid)
+        {
+            string rutaPrincipal = _webHostEnvironment.WebRootPath;
+            var archivos = HttpContext.Request.Form.Files;
+            var articuloDesdeBd = _contenedorTrabajo.Articulo.Get(artiVM.Articulo.Id);
+            if (archivos.Count > 0)
+            {
+                // Nueva imagen
+                string nombreArchivo = Guid.NewGuid().ToString();
+                var subidas = Path.Combine(rutaPrincipal, "imagenes", "articulos");
+                var extension = Path.GetExtension(archivos[0].FileName);
+                var rutaImagen = Path.Combine(rutaPrincipal, articuloDesdeBd.UrlImagen.TrimStart('/'));
+
+                if (System.IO.File.Exists(rutaImagen))
+                {
+                    System.IO.File.Delete(rutaImagen); // Eliminamos el archivo anterior
+                }
+                // Volvemos a subir el archivo
+                using (var fileStreams =
+                       new FileStream(Path.Combine(subidas, nombreArchivo + extension), FileMode.Create))
+                {
+                    archivos[0].CopyTo(fileStreams);
+                }
+
+                artiVM.Articulo.UrlImagen = "/imagenes/articulos/" + nombreArchivo + extension;
+                artiVM.Articulo.FechaCreacion = DateTime.Now.ToString(CultureInfo.CurrentCulture);
+
+                _contenedorTrabajo.Articulo.Update(artiVM.Articulo);
+                _contenedorTrabajo.Save();
+                
+                return RedirectToAction(nameof(Index)); 
+            }
+            else
+            {
+                // Se conserva la imagen
+                artiVM.Articulo.UrlImagen = articuloDesdeBd.UrlImagen;
+            }
+            _contenedorTrabajo.Articulo.Update(artiVM.Articulo);
+            _contenedorTrabajo.Save();
+                
+            return RedirectToAction(nameof(Index)); 
+        }
+        artiVM.ListaCategorias = _contenedorTrabajo.Categoria.GetListaCategorias();
+        return View(artiVM);
+    }
+    
     
     #region Llamadas a la API
     [HttpGet]
@@ -109,5 +149,27 @@ public class ArticulosController: Controller
         return Json(new { data = _contenedorTrabajo.Articulo.GetAll(includeProperties: "Categoria") });
     }
 
+    [HttpDelete]
+    public IActionResult Delete(int id)
+    {
+        var articuloDesdeBd = _contenedorTrabajo.Articulo.Get(id);
+        string rutaDirectorioPrincipal = _webHostEnvironment.WebRootPath;
+        var rutaImagen = Path.Combine(rutaDirectorioPrincipal, articuloDesdeBd.UrlImagen.TrimStart('/'));
+        
+        if (System.IO.File.Exists(rutaImagen))
+        {
+            System.IO.File.Delete(rutaImagen); // Eliminamos la imagen
+        }
+        
+        if (articuloDesdeBd == null )
+        {
+            return Json(new {success = false, message = "Error al borrar el articulo" });
+        }
+        
+        _contenedorTrabajo.Articulo.Remove(articuloDesdeBd);
+        _contenedorTrabajo.Save();
+        
+        return Json(new {success = true, message = "Articulo eliminado correctamente" });
+    }
     #endregion
 }
