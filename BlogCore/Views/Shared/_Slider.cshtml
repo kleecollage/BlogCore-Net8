@@ -11,7 +11,10 @@
             @if (slider.Estado == true)
             {
                 <div class="carousel-item @itemDinamico">
-                    <img src="@Url.Content(slider.UrlImagen)" class="d-block w-100" alt="slider imagen">
+                    <img src="@Url.Content(slider.UrlImagen)" 
+                         class="d-block w-100"
+                         style="max-height: 500px; object-fit: cover;"
+                         alt="slider imagen">
                     <h1 class="text-dark text-center bg-dark py-1">@Html.Raw(slider.Nombre)</h1>
                 </div>
             }
