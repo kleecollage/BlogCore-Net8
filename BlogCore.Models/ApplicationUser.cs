@@ -16,6 +16,4 @@ public class ApplicationUser: IdentityUser
     
     [Required(ErrorMessage = "El pais es obligatorio")]
     public string Pais { get; set; }
-    
-    
 }
