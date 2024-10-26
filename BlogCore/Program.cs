@@ -45,7 +45,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
+app.UseAuthorization(); // Importante para bloqueo de rutas
 
 app.MapControllerRoute(
     name: "default",
