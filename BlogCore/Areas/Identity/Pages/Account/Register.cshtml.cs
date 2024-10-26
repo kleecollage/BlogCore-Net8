@@ -11,6 +11,7 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using BlogCore.Models;
+using BlogCore.Utilidades;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -30,13 +31,15 @@ namespace BlogCore.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +47,7 @@ namespace BlogCore.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -113,7 +117,6 @@ namespace BlogCore.Areas.Identity.Pages.Account
             public string Pais { get; set; }
         }
 
-
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
@@ -127,13 +130,46 @@ namespace BlogCore.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-
+                
+                // Guardamos los campos personalizados
+                user.Nombre = Input.Nombre;
+                user.Direccion = Input.Direccion;
+                user.Ciudad = Input.Ciudad;
+                user.Pais = Input.Pais;
+                
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
+                    
+                    // Aqui validamos si los roles existen, sino, se crean
+                    if (!await _roleManager.RoleExistsAsync(CNT.Administrador))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole(CNT.Administrador));
+                        await _roleManager.CreateAsync(new IdentityRole(CNT.Registrado));
+                        await _roleManager.CreateAsync(new IdentityRole(CNT.Cliente));
+                    }
+                    // Obtenemos el rol seleccionado
+                    string rol = Request.Form["radUsuarioRole"].ToString();
+                    // Validamos si el rol seleccionad es Admin, si lo es lo agregamos
+                    if (rol == CNT.Administrador)
+                    {
+                        await _userManager.AddToRoleAsync(user, CNT.Administrador);
+                    }
+                    else
+                    {
+                        if (rol == CNT.Registrado)
+                        {
+                            await _userManager.AddToRoleAsync(user, CNT.Registrado);
+                        }
+                        else
+                        {
+                            await _userManager.AddToRoleAsync(user, CNT.Cliente);
+                        }
+                    }
+                    
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
