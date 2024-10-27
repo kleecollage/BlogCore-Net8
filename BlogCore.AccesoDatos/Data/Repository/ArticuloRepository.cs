@@ -24,4 +24,10 @@ public class ArticuloRepository: Repository<Articulo>, IArticuloRepository
         
         // _context.SaveChanges();
     }
+
+    // Metodo para el buscador
+    public IQueryable<Articulo> AsQueryable()
+    {
+        return _context.Set<Articulo>().AsQueryable();
+    }
 }

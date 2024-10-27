@@ -1,20 +1,12 @@
-﻿@using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Manage.Internal
-@model BlogCore.Models.ViewModels.HomeVM
-@{
-    ViewData["Title"] = "Inicio";
-}
+@model ListaPaginada<Articulo>
 
-<div class="row mt-1">
-    <div class="col-sm-12">
-        <h1 class="text-center text-white bg-secondary py-1">Ultimos Cursos y Tutoriales</h1>
-    </div>
-</div>
-
-@if (Model.ListaArticulos.Count() > 0)
+<h2 class="text-center">Lista de Entrada</h2>
+@* Mostrar entradas *@
+@if (Model.Count > 0)
 {
     <hr/>
     <div class="row">
-        @foreach (var articulo in Model.ListaArticulos.OrderBy(o => o.Id))
+        @foreach (var articulo in Model)
         {
             <div class="col-4  d-flex align-items-center justify-content-center">
                 <div class="card mb-4" style="width: fit-content">
@@ -39,22 +31,24 @@ else
     <p>No hay articulos</p>
 }
 <br />
+<br />
 <!--Crear botones de páginación-->
 <div class="text-center">
     <nav aria-label="Page navigation">
         <ul class="pagination">
-            <li class="page-item @(Model.PageIndex > 1 ? "" : "disabled")">
-                <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageIndex - 1)" asp-route-searchString="@Model.ListaArticulos">Anterior</a>
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link" asp-controller="Home" asp-action="ResultadoBusqueda" asp-route-page="@(Model.PageIndex - 1)" asp-route-searchString="@Model.SearchString">Anterior</a>
             </li>
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
                 <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                    <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@i" asp-route-searchString="@Model.ListaArticulos">@i</a>
+                    <a class="page-link" asp-controller="Home" asp-action="ResultadoBusqueda" asp-route-page="@i" asp-route-searchString="@Model.SearchString">@i</a>
                 </li>
             }
-            <li class="page-item @(Model.PageIndex < Model.TotalPages ? "" : "disabled")">
-                <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageIndex + 1)" asp-route-searchString="@Model.ListaArticulos">Siguiente</a>
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                <a class="page-link" asp-controller="Home" asp-action="ResultadoBusqueda" asp-route-page="@(Model.PageIndex + 1)" asp-route-searchString="@Model.SearchString">Siguiente</a>
             </li>
         </ul>
     </nav>
 </div>
+

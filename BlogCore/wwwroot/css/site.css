@@ -20,3 +20,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/*
+::placeholder{
+  color: #101010 !important;
+}*/
