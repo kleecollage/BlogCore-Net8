@@ -19,8 +19,8 @@
 <header>
     @*Bootswatch*@
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Navbar</a>
+        <div class="container">
+            <a class="navbar-brand" href="/"><img src="~/imagenes/ic_logo.png" alt="logo" style="max-height: 75px"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -45,9 +45,13 @@
                         </li>
                     }
                 </ul>
-                <form class="d-flex" method="get" asp-action="ResultadoBusqueda" asp-controller="Home">
-                    <input class="form-control me-sm-2 text-dark" type="text" name="searchString" placeholder="¿Buscas algo especial?">
-                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Buscar</button>
+                <form class="d-flex busqueda mr-4 ms-3" method="get" asp-action="ResultadoBusqueda" asp-controller="Home">
+                    <input class="form-control text-dark" type="text" name="searchString" placeholder="¿Buscas algo especial?">
+                    <div class="input-group-append">
+                        <button class="btn btn-success" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </form>
             </div>
             <partial name="_LoginPartial"/>
@@ -59,15 +63,22 @@
         <partial name="_Slider" />
     }
 </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - BlogCore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+@* BANNER *@
+<div class="container-fluid banner-container">
+    <div class="container banner-content">
+        <button type="button" class="btn btn-success subscribe-btn">Suscribete a nuestro Blog</button>
+    </div>
+</div>
+
+<footer class="border-top footer text-muted bg-dark" style="background-color: #1a1a1a !important;">
+        <div class="container py-4">
+            <span class="text-white">&copy; 2024 - BlogCore - <a href="http://rendeer2web.com" class="text-white">Desarrollado por rendeer2web</a></span>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

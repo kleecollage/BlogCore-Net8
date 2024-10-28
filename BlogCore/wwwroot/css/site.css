@@ -17,11 +17,63 @@ html {
   min-height: 100%;
 }
 
-body {
+/*body {
   margin-bottom: 60px;
-}
+}*/
 
 /*
-::placeholder{
+.busqueda ::placeholder{
   color: #101010 !important;
 }*/
+
+.navbar {
+  padding: 10px 0;
+}
+
+/* Alineacion del icono de busqueda */
+.input-group-append{
+  display: flex;
+  align-items: center;
+}
+
+/* Boton de busqueda */
+.busqueda .btn-secondary{
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Banner */
+.banner-container{
+  position: relative;
+  height: 70vh;
+  overflow: hidden;
+  background: url("../imagenes/banner.png") center no-repeat;
+  background-size: cover;
+}
+
+.banner-content{
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%);
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.subscribe-btn{
+  padding: 15px 30px;
+  font-size: 32px;
+  border-radius: 14px;
+}
+
+/*  */
+
+
+
+
+
+
+
+
+
+
