@@ -1,0 +1,41 @@
+"ConnectionStrings": {
+  "ConexionSQL": "Server=AQUISERVIDOR;Database=AQUIBASEDEDATOS;User ID=AQUIUSUARIO;Password=AQUIPASSWORD;Trusted_Connection=true;Encrypt=false;MultipleActiveResultSets=true"
+},
+
+// RIDER
+// on appsettings.json...
+"ConnectionStrings": {
+    "ConnectionSql": "Server=localhost,1433;Database=BlogCoreBdNet8;User ID=klee;Password=...;Encrypt=false;TrustServerCertificate=True;MultipleActiveResultSets=true"
+},
+// on Program.cs..
+// Configure the connection to the local sql server db MSSQLLOCAL
+var connectionString = builder.Configuration.GetConnectionString("ConnectionSql") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+// Support for Identity. IMPORTANT remove the account confirmation by email builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+        {
+        options.Tokens.ProviderMap.Add("Default", new TokenProviderDescriptor(typeof(DataProtectorTokenProvider<ApplicationUser>)));
+        options.SignIn.RequireConfirmedAccount = false;
+    })
+    .AddDefaultTokenProviders()
+
+=====================================================================   OPTION 2   ==============================================================================
+// on Program.cs
+// Configure the connection to the local sql server db MSSQLLOCAL
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionSQL")));
+// Support for Identity. IMPORTANT remove the account confirmation by email
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+
+
+
+
+
+
+
+
+
+
+

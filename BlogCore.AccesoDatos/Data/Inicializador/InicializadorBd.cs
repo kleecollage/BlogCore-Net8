@@ -1,9 +1,10 @@
+using BlogCore.Data;
 using BlogCore.Models;
 using BlogCore.Utilidades;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlogCore.Data.Inicializador;
+namespace BlogCore.AccesoDatos.Data.Inicializador;
 
 public class InicializadorBd: IInicializadorBd
 {
@@ -11,11 +12,11 @@ public class InicializadorBd: IInicializadorBd
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     
-    public void Inicializar(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+    public InicializadorBd(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
     {
-        context = _context;
-        userManager = _userManager;
-        roleManager = _roleManager;    
+        _context = context;
+        _userManager = userManager;
+        _roleManager = roleManager;    
     }
 
     public void Inicializar()
@@ -34,7 +35,6 @@ public class InicializadorBd: IInicializadorBd
         }
 
         if (_context.Roles.Any(ro => ro.Name == CNT.Administrador)) return;
-        
         
         /* CREACION DE ROLES */
         _roleManager.CreateAsync(new IdentityRole(CNT.Administrador)).GetAwaiter().GetResult();
