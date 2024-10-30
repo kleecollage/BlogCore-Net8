@@ -3,6 +3,7 @@ using BlogCore.Data;
 using BlogCore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogCore.Areas.Admin.Controllers;
 [Authorize(Roles = "Administrador")]
@@ -10,11 +11,14 @@ namespace BlogCore.Areas.Admin.Controllers;
 public class CategoriasController : Controller
 {
     private readonly IContenedorTrabajo _contenedorTrabajo;
+    private readonly ApplicationDbContext _context;
 
-    public CategoriasController(IContenedorTrabajo contenedorTrabajo)
+    public CategoriasController(IContenedorTrabajo contenedorTrabajo, ApplicationDbContext context)
     {
         _contenedorTrabajo = contenedorTrabajo;
+        _context = context;
     }
+    
     // GET
     [HttpGet]
     public IActionResult Index()
@@ -77,7 +81,9 @@ public class CategoriasController : Controller
     [HttpGet]
     public IActionResult GetAll()
     {
-        return Json(new { data = _contenedorTrabajo.Categoria.GetAll() });
+        var categorias = _context.Categoria.FromSqlRaw<Categoria>("spGetCategorias").ToList();
+        return Json(new { data = categorias });
+        //return Json(new { data = _contenedorTrabajo.Categoria.GetAll() });
     }
 
     [HttpDelete]

@@ -32,7 +32,7 @@ public class HomeController : Controller
 
     // Segunda version, ppagina de inicio con paginacon
     [HttpGet]
-    public IActionResult Index(int page = 1, int pageSize = 3)
+    public IActionResult Index(int page = 1, int pageSize = 9)
     {
         var articulos = _contenedorTrabajo.Articulo.AsQueryable();
         // Paginar los resultados
